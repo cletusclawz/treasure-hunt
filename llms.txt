@@ -1,0 +1,32 @@
+# Cletus Treasure Hunt
+
+> A nationwide deal-hunting service. Twice a day we scan Facebook Marketplace, Craigslist, eBay and public auction houses across the United States, filter out junk and sold listings, and email customers a short list of live, on-target deals with direct links. Read-only scouting: we never contact sellers, bid, or spend on a customer's behalf.
+
+## Service
+- Name: Cletus Treasure Hunt
+- Provider: Cletus Advanced Solutions
+- Area served: United States (all 50 states; customer-set search radius from local pickup to nationwide-and-ship)
+- Model: You name a target, we scan 12+ marketplaces and auction houses twice daily and email a curated short list of live listings with direct links and why-it's-a-deal notes.
+
+## Pricing
+- First find: free (no match in 7 days, you pay nothing)
+- Single Hunt: $49 one-time (one target)
+- Standard: $99/month (up to 3 targets, 2x/day scan)
+- Pro: $199/month (6 targets, auction coverage, bid math)
+- Local Business: $299/month (equipment sourcing for businesses)
+
+## Sources scanned
+- Facebook Marketplace, Craigslist, eBay
+- Public auction houses: GovDeals, Municibid, HiBid and others
+
+## What it will NOT do
+- It does not contact sellers
+- It does not place bids
+- It does not spend money on a customer's behalf
+- Every purchase decision stays with the customer
+
+## Links
+- Home: https://cletusclawz.github.io/treasure-hunt/
+- Pricing: https://cletusclawz.github.io/treasure-hunt/#pricing
+- FAQ: https://cletusclawz.github.io/treasure-hunt/#faq
+- Sign up: https://cletusclawz.github.io/treasure-hunt/#start
