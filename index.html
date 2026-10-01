@@ -18,7 +18,7 @@
 <meta property="og:title" content="We hunt the deals. You just show up and grab them.">
 <meta property="og:description" content="Twice a day we scan Facebook, Craigslist, eBay and the auction houses and email you a short list of live, on-target deals — anywhere in the U.S. First find free.">
 <meta property="og:url" content="https://cletusclawz.github.io/treasure-hunt/">
-<meta property="og:image" content="https://cletusclawz.github.io/treasure-hunt/media/hero-poster.jpg">
+<meta property="og:image" content="https://cletusclawz.github.io/treasure-hunt/media/usa-hero.jpg">
 <meta property="og:image:width" content="1600">
 <meta property="og:image:height" content="900">
 
@@ -26,7 +26,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Cletus Treasure Hunt — deal & auction alerts, nationwide">
 <meta name="twitter:description" content="We scan the marketplaces twice a day and email you live, on-target deals. First find free.">
-<meta name="twitter:image" content="https://cletusclawz.github.io/treasure-hunt/media/hero-poster.jpg">
+<meta name="twitter:image" content="https://cletusclawz.github.io/treasure-hunt/media/usa-hero.jpg">
 
 <style>
 :root{
@@ -305,7 +305,7 @@ footer .brand{color:var(--ink); font-weight:800; margin-bottom:6px}
         {
           "@type": "Question",
           "name": "Which marketplaces does it search?",
-          "acceptedAnswer": { "@type": "Answer", "text": "It watches 12+ sources including Facebook Marketplace, Craigslist, eBay, and public auction houses such as GovDeals, Municibid and HiBid. It checks sites most people never think to look at, twice a day, so fresh listings are caught within hours." }
+          "acceptedAnswer": { "@type": "Answer", "text": "It watches 12+ sources nationwide including Facebook Marketplace, Craigslist, and eBay, plus national auction networks such as GovDeals, Public Surplus, Municibid, GSA Auctions, AllSurplus, Proxibid and GovPlanet, and aggregators that span 40+ government auction sites at once. It checks places most people never look, twice a day, so fresh listings are caught within hours." }
         },
         {
           "@type": "Question",
@@ -336,7 +336,7 @@ footer .brand{color:var(--ink); font-weight:800; margin-bottom:6px}
   </div>
   <div class="content">
     <div class="wrap">
-      <span class="eyebrow"><span class="pulse"></span> Scanning 12+ marketplaces &amp; auction houses · live now</span>
+      <span class="eyebrow"><span class="pulse"></span> Scanning 12+ marketplaces &amp; auction networks · nationwide · live now</span>
       <h1>We hunt the deals.<br><span class="hl">You just show up<br>and grab them.</span></h1>
       <p class="sub">Tell us what you're after. Twice a day we scan Facebook, Craigslist, eBay and the auction houses <b>coast to coast</b>, filter out the junk and the sold lots, and email you a short list of <b>live, on-target, direct links</b> — near you or nationwide. That's it.</p>
       <div class="btns">
@@ -600,7 +600,7 @@ footer .brand{color:var(--ink); font-weight:800; margin-bottom:6px}
       </div>
       <div class="qa">
         <h3>Which marketplaces does it search?</h3>
-        <p>It watches 12+ sources including Facebook Marketplace, Craigslist, eBay, and public auction houses such as GovDeals, Municibid and HiBid. It checks sites most people never think to look at, twice a day, so fresh listings are caught within hours.</p>
+        <p>It watches 12+ sources nationwide including Facebook Marketplace, Craigslist, and eBay, plus national auction networks like GovDeals, Public Surplus, Municibid, GSA Auctions, AllSurplus, Proxibid and GovPlanet — and aggregators that span 40+ government auction sites at once. It checks places most people never look, twice a day, so fresh listings are caught within hours.</p>
       </div>
       <div class="qa">
         <h3>Will it buy or bid on items for me?</h3>
@@ -650,8 +650,8 @@ function initHeroMedia(){
   function fallbackImg(){
     if(mounted) return;
     const testImg=new Image();
-    testImg.onload=()=>{ if(!mounted) bg.innerHTML='<img src="media/hero.jpg" alt="Treasure hunt scanner sweeping Ohio for tech deals" style="width:100%;height:100%;object-fit:cover">'; };
-    testImg.src='media/hero.jpg';
+    testImg.onload=()=>{ if(!mounted) bg.innerHTML='<img src="media/usa-hero.jpg" alt="Treasure Hunt scanner sweeping a map of the United States for live tech, equipment and auction deals" style="width:100%;height:100%;object-fit:cover">'; };
+    testImg.src='media/usa-hero.jpg';
   }
   // kick the load
   v.load();
