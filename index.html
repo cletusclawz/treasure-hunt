@@ -18,7 +18,7 @@
 <meta property="og:title" content="We hunt the deals. You just show up and grab them.">
 <meta property="og:description" content="Twice a day we scan Facebook, Craigslist, eBay and the auction houses and email you a short list of live, on-target deals — anywhere in the U.S. First find free.">
 <meta property="og:url" content="https://cletusclawz.github.io/treasure-hunt/">
-<meta property="og:image" content="https://cletusclawz.github.io/treasure-hunt/media/usa-hero.jpg">
+<meta property="og:image" content="https://cletusclawz.github.io/treasure-hunt/media/usa-hero-poster.jpg">
 <meta property="og:image:width" content="1600">
 <meta property="og:image:height" content="900">
 
@@ -26,7 +26,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Cletus Treasure Hunt — deal & auction alerts, nationwide">
 <meta name="twitter:description" content="We scan the marketplaces twice a day and email you live, on-target deals. First find free.">
-<meta name="twitter:image" content="https://cletusclawz.github.io/treasure-hunt/media/usa-hero.jpg">
+<meta name="twitter:image" content="https://cletusclawz.github.io/treasure-hunt/media/usa-hero-poster.jpg">
 
 <style>
 :root{
@@ -61,7 +61,8 @@ a{color:inherit}
   background-image:linear-gradient(rgba(230,178,60,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(230,178,60,.08) 1px,transparent 1px);
   background-size:46px 46px; mask-image:radial-gradient(circle at 60% 40%,#000 0%,transparent 75%)}
 /* radar sweep */
-.radar{position:absolute; z-index:1; top:50%; right:-140px; transform:translateY(-50%); width:560px; height:560px; opacity:.55; pointer-events:none}
+/* The selected hero video already contains the radar sweep. Keep this decorative layer disabled to avoid a doubled, hard-edged sweep over the USA map. */
+.radar{display:none}
 .radar .ring{position:absolute; inset:0; border:1px solid rgba(230,178,60,.25); border-radius:50%}
 .radar .ring:nth-child(2){inset:70px} .radar .ring:nth-child(3){inset:150px} .radar .ring:nth-child(4){inset:230px}
 .radar .sweep{position:absolute; inset:0; border-radius:50%;
@@ -77,15 +78,14 @@ a{color:inherit}
 @keyframes blip{0%,100%{opacity:0; transform:scale(.4)}10%{opacity:1; transform:scale(1)}45%{opacity:.15}}
 .hero .content{position:relative; z-index:2; width:100%}
 .hero .content .wrap{position:relative}
-.hero .content .wrap::before{content:""; position:absolute; left:-40px; top:-30px; bottom:-30px; width:min(760px,92%); z-index:-1;
-  background:radial-gradient(120% 100% at 20% 50%, rgba(11,14,19,.82) 0%, rgba(11,14,19,.5) 55%, transparent 100%)}
+.hero .content .wrap::before{display:none}
 .eyebrow{display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:12.5px; letter-spacing:.16em; text-transform:uppercase;
   border:1px solid rgba(230,178,60,.4); padding:6px 13px; border-radius:999px; margin-bottom:22px; background:rgba(230,178,60,.06)}
 .eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--green); box-shadow:0 0 0 0 rgba(37,194,116,.7); animation:pulse 1.8s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,194,116,.6)}70%{box-shadow:0 0 0 9px rgba(37,194,116,0)}100%{box-shadow:0 0 0 0 rgba(37,194,116,0)}}
 .hero h1{color:#fff; font-size:clamp(34px,6vw,62px); line-height:1.03; letter-spacing:-.025em; max-width:15ch; margin-bottom:20px}
 .hero h1 .hl{background:linear-gradient(100deg,var(--gold-soft),var(--gold),var(--gold2)); -webkit-background-clip:text; background-clip:text; color:transparent}
-.hero p.sub{color:#c4cdd8; font-size:clamp(16px,2.3vw,21px); max-width:56ch; margin-bottom:30px}
+.hero p.sub{color:#c4cdd8; font-size:clamp(16px,2.3vw,21px); max-width:60ch; margin-bottom:30px}
 .hero .btns{display:flex; gap:14px; flex-wrap:wrap; align-items:center}
 .btn{display:inline-flex; align-items:center; gap:9px; font-weight:700; text-decoration:none; border-radius:12px; padding:16px 26px; font-size:17px; transition:transform .15s, box-shadow .2s}
 .btn.gold{background:linear-gradient(180deg,var(--gold),var(--gold2)); color:#1a1200; box-shadow:0 10px 30px rgba(230,178,60,.35)}
@@ -654,10 +654,10 @@ function initHeroMedia(){
   const v = document.createElement('video');
   v.muted=true; v.loop=true; v.playsInline=true; v.autoplay=true; v.preload='auto';
   v.setAttribute('playsinline',''); v.setAttribute('muted','');
-  v.poster='media/hero-poster.jpg';
+  v.poster='media/usa-hero-poster.jpg';
   v.style.cssText='width:100%;height:100%;object-fit:cover';
-  const mp4=document.createElement('source'); mp4.src='media/hero.mp4'; mp4.type='video/mp4';
-  const webm=document.createElement('source'); webm.src='media/hero.webm'; webm.type='video/webm';
+  const mp4=document.createElement('source'); mp4.src='media/usa-hero.mp4'; mp4.type='video/mp4';
+  const webm=document.createElement('source'); webm.src='media/usa-hero.webm'; webm.type='video/webm';
   v.appendChild(webm); v.appendChild(mp4);
   let mounted=false;
   v.addEventListener('loadeddata', ()=>{ if(!mounted){ mounted=true; bg.innerHTML=''; bg.appendChild(v); v.play().catch(()=>{}); } });
@@ -667,8 +667,8 @@ function initHeroMedia(){
   function fallbackImg(){
     if(mounted) return;
     const testImg=new Image();
-    testImg.onload=()=>{ if(!mounted) bg.innerHTML='<img src="media/usa-hero.jpg" alt="Treasure Hunt scanner sweeping a map of the United States for live tech, equipment and auction deals" style="width:100%;height:100%;object-fit:cover">'; };
-    testImg.src='media/usa-hero.jpg';
+    testImg.onload=()=>{ if(!mounted) bg.innerHTML='<img src="media/usa-hero-poster.jpg" alt="Treasure Hunt scanner sweeping a map of the United States for live tech, equipment and auction deals" style="width:100%;height:100%;object-fit:cover">'; };
+    testImg.src='media/usa-hero-poster.jpg';
   }
   // kick the load
   v.load();
