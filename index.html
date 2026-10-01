@@ -53,8 +53,10 @@ a{color:inherit}
 
 /* ---------- hero ---------- */
 .hero{position:relative; min-height:100vh; display:flex; align-items:center; overflow:hidden; background:var(--navy)}
-.hero .bg{position:absolute; inset:0; z-index:0}
-.hero .bg img,.hero .bg video{width:100%; height:100%; object-fit:cover; opacity:.7}
+.hero .bg{position:absolute; inset:0; z-index:0; background:url('media/usa-hero-poster.jpg') center/cover no-repeat}
+.hero .bg img,.hero .bg video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.7}
+.hero .bg .hero-video{opacity:0; pointer-events:none; transition:opacity .45s ease}
+.hero .bg .hero-video.is-playing{opacity:.7}
 .hero .bg::after{content:""; position:absolute; inset:0;
   background:linear-gradient(90deg,rgba(11,14,19,.88) 0%,rgba(11,14,19,.6) 45%,rgba(11,14,19,.25) 100%)}
 .hero .grid-fx{position:absolute; inset:0; z-index:1; opacity:.25;
@@ -648,30 +650,47 @@ footer .brand{color:var(--ink); font-weight:800; margin-bottom:6px}
 </footer>
 
 <script>
-/* ---------- hero media: video (mp4/webm) > image > pure CSS ---------- */
+/* ---------- hero media: animated fallback first, then verified video ---------- */
 function initHeroMedia(){
   const bg = document.getElementById('heroBg');
+
+  // This same-source animated WebP keeps the hero moving when a browser blocks autoplay.
+  const fallback = document.createElement('img');
+  fallback.className='hero-fallback';
+  fallback.src='media/usa-hero-loop.webp';
+  fallback.alt='Treasure Hunt scanner sweeping a map of the United States for live tech, equipment and auction deals';
+  fallback.setAttribute('fetchpriority','high');
+  fallback.addEventListener('error',()=>{ fallback.src='media/usa-hero-poster.jpg'; },{once:true});
+  bg.replaceChildren(fallback);
+
   const v = document.createElement('video');
-  v.muted=true; v.loop=true; v.playsInline=true; v.autoplay=true; v.preload='auto';
-  v.setAttribute('playsinline',''); v.setAttribute('muted','');
+  v.className='hero-video';
+  v.muted=true; v.defaultMuted=true; v.loop=true; v.playsInline=true; v.autoplay=true; v.preload='auto';
+  v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); v.setAttribute('muted',''); v.setAttribute('aria-hidden','true');
+  v.disablePictureInPicture=true;
   v.poster='media/usa-hero-poster.jpg';
-  v.style.cssText='width:100%;height:100%;object-fit:cover';
   const mp4=document.createElement('source'); mp4.src='media/usa-hero.mp4'; mp4.type='video/mp4';
   const webm=document.createElement('source'); webm.src='media/usa-hero.webm'; webm.type='video/webm';
-  v.appendChild(webm); v.appendChild(mp4);
-  let mounted=false;
-  v.addEventListener('loadeddata', ()=>{ if(!mounted){ mounted=true; bg.innerHTML=''; bg.appendChild(v); v.play().catch(()=>{}); } });
-  v.addEventListener('error', fallbackImg);
-  // if video hasn't loaded in 3.5s (blocked autoplay / slow), show the image so hero never sits dark
-  setTimeout(()=>{ if(!mounted) fallbackImg(); }, 3500);
-  function fallbackImg(){
-    if(mounted) return;
-    const testImg=new Image();
-    testImg.onload=()=>{ if(!mounted) bg.innerHTML='<img src="media/usa-hero-poster.jpg" alt="Treasure Hunt scanner sweeping a map of the United States for live tech, equipment and auction deals" style="width:100%;height:100%;object-fit:cover">'; };
-    testImg.src='media/usa-hero-poster.jpg';
-  }
-  // kick the load
+  // MP4 first for Safari/iPhone; WebM remains available as the secondary source.
+  v.appendChild(mp4); v.appendChild(webm);
+  bg.appendChild(v);
+
+  const revealIfMoving=()=>{
+    if(!v.paused && v.currentTime>.03) v.classList.add('is-playing');
+  };
+  const tryPlay=()=>{
+    const attempt=v.play();
+    if(attempt && typeof attempt.then==='function') attempt.then(revealIfMoving).catch(()=>{});
+  };
+  v.addEventListener('playing',revealIfMoving);
+  v.addEventListener('timeupdate',revealIfMoving);
+  v.addEventListener('canplay',tryPlay,{once:true});
+  v.addEventListener('error',()=>{ v.remove(); });
+  window.addEventListener('pageshow',tryPlay);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) tryPlay(); });
+  ['pointerdown','touchstart','keydown'].forEach(type=>window.addEventListener(type,tryPlay,{once:true,passive:true}));
   v.load();
+  tryPlay();
 }
 initHeroMedia();
 
