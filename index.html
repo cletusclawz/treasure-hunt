@@ -792,21 +792,31 @@ dio.observe(document.getElementById('digest'));
     if(bad){ note.textContent='Please fill in your name, a valid email, and what you\u2019re hunting.'; note.style.color='#e0524a'; return; }
     btn.disabled=true; btn.textContent='Sending\u2026'; note.style.color='';
     data.ts=new Date().toISOString(); data.source='treasure-hunt-landing';
-    let sent=false;
+    let sent=false, receipt=null;
     try{
-      const r=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-      sent = r.ok;
+      const payload={
+        name:data.name||'',
+        email:data.email||'',
+        phone:'',
+        subject:'New Treasure Hunt signup: '+(data.name||'')+' - '+(data.target||''),
+        message:'New Cletus Treasure Hunt signup:\n\nName: '+(data.name||'')+'\nEmail: '+(data.email||'')+'\nHunting: '+(data.target||'')+'\nBudget: '+(data.budget||'')+'\nZIP: '+(data.zip||'')+'  Radius: '+(data.radius||'')+'\nPlan: '+(data.plan||'')+'\nSource: '+data.source+'\nSubmitted: '+data.ts,
+        source:data.source
+      };
+      const r=await fetch('https://4-hitech.info/wp-json/imp-email/v1/contact',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});
+      const result=await r.json().catch(()=>null);
+      receipt=Number(result&&result.submission_id);
+      sent=Boolean(r.ok&&result&&result.success===true&&result.saved===true&&Number.isInteger(receipt)&&receipt>0);
     }catch(err){ sent=false; }
-    if(!sent){ // static host (no backend): stash locally AND open a prefilled email so the lead reaches us
+    if(!sent){
       try{ const q=JSON.parse(localStorage.getItem('th_leads')||'[]'); q.push(data); localStorage.setItem('th_leads',JSON.stringify(q)); }catch(e){}
-      try{
-        const subj=encodeURIComponent('New Treasure Hunt signup: '+(data.name||'')+' \u2014 '+(data.target||''));
-        const body=encodeURIComponent('Name: '+(data.name||'')+'\nEmail: '+(data.email||'')+'\nHunting: '+(data.target||'')+'\nBudget: '+(data.budget||'')+'\nZIP: '+(data.zip||'')+'  Radius: '+(data.radius||'')+'\nPlan: '+(data.plan||''));
-        window.location.href='mailto:4hitech@gmail.com?subject='+subj+'&body='+body;
-      }catch(e){}
+      btn.disabled=false; btn.textContent='Try sending again';
+      note.innerHTML='We could not confirm delivery. Please try again or email <a href="mailto:4hitech@gmail.com">4hitech@gmail.com</a>.';
+      note.style.color='#e0524a';
+      return;
     }
     form.querySelectorAll('.fld, .frow, #intakeBtn, .formnote').forEach(el=>el.style.display='none');
     ok.hidden=false; ok.classList.add('show');
+    ok.dataset.receipt=String(receipt);
     document.getElementById('okMsg').textContent='We\u2019ve got your target: \u201c'+(data.target||'your hunt')+'\u201d. Your first digest is on the way \u2014 watch '+(data.email||'your inbox')+'.';
   });
 })();
