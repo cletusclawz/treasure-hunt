@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Cletus Treasure Hunt — We Hunt the Deals. You Just Show Up.</title>
+<style>
+:root{
+  --ink:#0b0e13; --paper:#f7f9fc; --muted:#6b7580; --line:#e6e9ef;
+  --card:#ffffff; --navy:#0d131c; --navy2:#141d2a; --navy3:#1b2634;
+  --gold:#e6b23c; --gold2:#c8901f; --gold-soft:#f6d68a; --green:#25c274; --greenD:#128a4e;
+  --radius:16px; --maxw:1100px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink); background:var(--paper); line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px}
+a{color:inherit}
+
+/* ---------- top bar ---------- */
+.nav{position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+  padding:14px 22px; background:rgba(13,19,28,.72); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,.06)}
+.nav .brand{display:flex; align-items:center; gap:10px; color:#fff; font-weight:800; letter-spacing:.02em}
+.nav .brand .dot{width:26px;height:26px;border-radius:8px;background:radial-gradient(circle at 30% 30%,var(--gold-soft),var(--gold2));
+  display:flex;align-items:center;justify-content:center;font-size:15px}
+.nav .cta-mini{background:var(--gold); color:#1a1200; font-weight:700; padding:9px 16px; border-radius:10px; text-decoration:none; font-size:14px}
+.nav .cta-mini:hover{background:#f0c150}
+
+/* ---------- hero ---------- */
+.hero{position:relative; min-height:100vh; display:flex; align-items:center; overflow:hidden; background:var(--navy)}
+.hero .bg{position:absolute; inset:0; z-index:0}
+.hero .bg img,.hero .bg video{width:100%; height:100%; object-fit:cover; opacity:.7}
+.hero .bg::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg,rgba(11,14,19,.88) 0%,rgba(11,14,19,.6) 45%,rgba(11,14,19,.25) 100%)}
+.hero .grid-fx{position:absolute; inset:0; z-index:1; opacity:.25;
+  background-image:linear-gradient(rgba(230,178,60,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(230,178,60,.08) 1px,transparent 1px);
+  background-size:46px 46px; mask-image:radial-gradient(circle at 60% 40%,#000 0%,transparent 75%)}
+/* radar sweep */
+.radar{position:absolute; z-index:1; top:50%; right:-140px; transform:translateY(-50%); width:560px; height:560px; opacity:.55; pointer-events:none}
+.radar .ring{position:absolute; inset:0; border:1px solid rgba(230,178,60,.25); border-radius:50%}
+.radar .ring:nth-child(2){inset:70px} .radar .ring:nth-child(3){inset:150px} .radar .ring:nth-child(4){inset:230px}
+.radar .sweep{position:absolute; inset:0; border-radius:50%;
+  background:conic-gradient(from 0deg, rgba(230,178,60,.45) 0deg, rgba(230,178,60,0) 60deg, transparent 360deg);
+  animation:spin 4.5s linear infinite}
+.radar .blip{position:absolute; width:10px;height:10px;border-radius:50%;background:var(--gold); box-shadow:0 0 12px var(--gold);
+  animation:blip 4.5s ease-in-out infinite}
+.radar .blip.b1{top:33%; left:44%; animation-delay:.4s}
+.radar .blip.b2{top:58%; left:60%; animation-delay:1.6s}
+.radar .blip.b3{top:46%; left:30%; animation-delay:2.8s}
+.radar .blip.b4{top:66%; left:40%; animation-delay:3.6s}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blip{0%,100%{opacity:0; transform:scale(.4)}10%{opacity:1; transform:scale(1)}45%{opacity:.15}}
+.hero .content{position:relative; z-index:2; width:100%}
+.hero .content .wrap{position:relative}
+.hero .content .wrap::before{content:""; position:absolute; left:-40px; top:-30px; bottom:-30px; width:min(760px,92%); z-index:-1;
+  background:radial-gradient(120% 100% at 20% 50%, rgba(11,14,19,.82) 0%, rgba(11,14,19,.5) 55%, transparent 100%)}
+.eyebrow{display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:12.5px; letter-spacing:.16em; text-transform:uppercase;
+  border:1px solid rgba(230,178,60,.4); padding:6px 13px; border-radius:999px; margin-bottom:22px; background:rgba(230,178,60,.06)}
+.eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--green); box-shadow:0 0 0 0 rgba(37,194,116,.7); animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,194,116,.6)}70%{box-shadow:0 0 0 9px rgba(37,194,116,0)}100%{box-shadow:0 0 0 0 rgba(37,194,116,0)}}
+.hero h1{color:#fff; font-size:clamp(34px,6vw,62px); line-height:1.03; letter-spacing:-.025em; max-width:15ch; margin-bottom:20px}
+.hero h1 .hl{background:linear-gradient(100deg,var(--gold-soft),var(--gold),var(--gold2)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.hero p.sub{color:#c4cdd8; font-size:clamp(16px,2.3vw,21px); max-width:56ch; margin-bottom:30px}
+.hero .btns{display:flex; gap:14px; flex-wrap:wrap; align-items:center}
+.btn{display:inline-flex; align-items:center; gap:9px; font-weight:700; text-decoration:none; border-radius:12px; padding:16px 26px; font-size:17px; transition:transform .15s, box-shadow .2s}
+.btn.gold{background:linear-gradient(180deg,var(--gold),var(--gold2)); color:#1a1200; box-shadow:0 10px 30px rgba(230,178,60,.35)}
+.btn.gold:hover{transform:translateY(-2px); box-shadow:0 16px 40px rgba(230,178,60,.45)}
+.btn.ghost{background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.32)}
+.btn.ghost:hover{background:rgba(255,255,255,.16)}
+.hero .trust{margin-top:26px; color:#c3cdd8; font-size:13.5px; display:flex; gap:18px; flex-wrap:wrap}
+.hero .trust b{color:#ffffff}
+.scrollcue{position:absolute; bottom:22px; left:50%; transform:translateX(-50%); z-index:2; color:#7d8894; font-size:12px; letter-spacing:.1em; text-transform:uppercase; opacity:.8}
+.scrollcue span{display:block; width:1px; height:26px; margin:8px auto 0; background:linear-gradient(var(--gold),transparent); animation:cue 1.8s infinite}
+@keyframes cue{0%{opacity:0;transform:scaleY(.3)}50%{opacity:1}100%{opacity:0;transform:translateY(10px) scaleY(.3)}}
+
+/* ---------- stat strip ---------- */
+.stats{background:var(--navy2); border-top:1px solid rgba(255,255,255,.06); border-bottom:1px solid rgba(255,255,255,.06)}
+.stats .row{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:34px 0}
+.stat{text-align:center; color:#fff}
+.stat .n{font-size:clamp(26px,4vw,40px); font-weight:800; letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--gold-soft),var(--gold)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.stat .l{color:#9aa6b3; font-size:13px; margin-top:4px}
+
+/* ---------- sections ---------- */
+section.blk{padding:76px 0}
+.reveal{opacity:0; transform:translateY(26px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1; transform:none}
+.kicker{color:var(--gold2); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:12.5px; margin-bottom:10px}
+h2.t{font-size:clamp(26px,4vw,40px); letter-spacing:-.02em; line-height:1.1; margin-bottom:12px}
+p.lead{color:var(--muted); font-size:18px; max-width:62ch; margin-bottom:36px}
+
+/* problem grid */
+.pain{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+.pain .c{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:22px; transition:transform .2s, box-shadow .2s}
+.pain .c:hover{transform:translateY(-4px); box-shadow:0 14px 34px rgba(13,19,28,.08)}
+.pain .c .ic{font-size:26px; margin-bottom:10px}
+.pain .c b{display:block; margin-bottom:4px; font-size:16px}
+.pain .c span{color:var(--muted); font-size:14.5px}
+
+/* scanner showcase */
+.showcase{background:var(--navy); color:#fff; border-radius:24px; padding:0; overflow:hidden; border:1px solid rgba(255,255,255,.08); position:relative}
+.showcase .inner{display:grid; grid-template-columns:1.05fr .95fr; gap:0}
+.showcase .left{padding:44px}
+.showcase .left h3{font-size:26px; margin-bottom:12px}
+.showcase .left p{color:#aeb9c6; font-size:15.5px; margin-bottom:22px}
+.showcase .feats{display:flex; flex-direction:column; gap:12px}
+.showcase .feats div{display:flex; gap:10px; align-items:flex-start; font-size:15px; color:#dbe3ec}
+.showcase .feats .ck{color:var(--green); font-weight:800}
+/* live scanner terminal */
+.scanner{background:linear-gradient(180deg,#0a0f16,#0d141d); border-left:1px solid rgba(255,255,255,.08); padding:26px; position:relative; min-height:420px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.scanner .bar{display:flex; align-items:center; gap:8px; margin-bottom:16px}
+.scanner .bar i{width:11px;height:11px;border-radius:50%}
+.scanner .bar .r{background:#ff5f57}.scanner .bar .y{background:#febc2e}.scanner .bar .g{background:#28c840}
+.scanner .bar .title{margin-left:8px; color:#7d8894; font-size:12px}
+.scan-line{display:flex; gap:10px; font-size:12.5px; padding:5px 0; border-bottom:1px dashed rgba(255,255,255,.05); opacity:0; transform:translateX(-8px); animation:sl .5s forwards}
+.scan-line .src{color:#5f6b78; width:74px; flex:0 0 74px}
+.scan-line .msg{color:#c8d2dc; flex:1}
+.scan-line.hit .msg{color:var(--gold-soft)}
+.scan-line.rej .msg{color:#6b7580; text-decoration:line-through}
+.scan-line .tag{font-size:10px; padding:1px 6px; border-radius:5px; font-weight:700; align-self:center}
+.scan-line .tag.live{background:rgba(37,194,116,.16); color:#4be39a}
+.scan-line .tag.x{background:rgba(255,95,87,.14); color:#ff8a84}
+@keyframes sl{to{opacity:1; transform:none}}
+.scanner .sweepbar{position:absolute; bottom:0; left:0; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); width:40%; animation:sweep 2.2s linear infinite}
+@keyframes sweep{0%{left:-40%}100%{left:100%}}
+
+/* how it works */
+.steps{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; counter-reset:s}
+.step{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:28px; position:relative; overflow:hidden}
+.step::before{counter-increment:s; content:"0" counter(s); position:absolute; top:-10px; right:14px; font-size:74px; font-weight:800; color:rgba(230,178,60,.10)}
+.step .ic{width:46px;height:46px;border-radius:12px; background:linear-gradient(180deg,var(--navy3),var(--navy)); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:14px}
+.step h3{font-size:18px; margin-bottom:6px}
+.step p{color:var(--muted); font-size:14.5px}
+
+/* incoming digest card */
+.digest-wrap{display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:center}
+.digest{background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 24px 60px rgba(13,19,28,.14); overflow:hidden}
+.digest .head{background:var(--navy); color:#fff; padding:16px 20px; display:flex; align-items:center; gap:12px}
+.digest .head .av{width:34px;height:34px;border-radius:9px;background:radial-gradient(circle at 30% 30%,var(--gold-soft),var(--gold2)); display:flex; align-items:center; justify-content:center}
+.digest .head .from{font-size:13px}
+.digest .head .from b{display:block; font-size:14px}
+.digest .head .time{margin-left:auto; color:#8a96a3; font-size:12px}
+.digest .body{padding:8px 0}
+.dl{display:flex; gap:12px; padding:13px 20px; border-bottom:1px solid var(--line); align-items:flex-start; opacity:0; transform:translateY(10px)}
+.dl.in{animation:din .5s forwards}
+@keyframes din{to{opacity:1; transform:none}}
+.dl .thumb{width:46px;height:46px;border-radius:10px; flex:0 0 46px; display:flex; align-items:center; justify-content:center; font-size:22px; background:linear-gradient(180deg,#f3f6fb,#e9eef5); border:1px solid var(--line)}
+.dl .info b{font-size:14.5px}
+.dl .info .meta{color:var(--muted); font-size:12.5px}
+.dl .info .why{color:var(--greenD); font-size:12px; margin-top:2px}
+.dl .price{margin-left:auto; text-align:right}
+.dl .price .p{font-weight:800; font-size:15px}
+.dl .price .badge{display:inline-block; margin-top:3px; font-size:10px; font-weight:800; color:#128a4e; background:rgba(37,194,116,.14); padding:2px 7px; border-radius:6px}
+.digest .foot{padding:12px 20px; color:var(--muted); font-size:12px; background:#fafbfd}
+
+/* why us */
+.why{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.why .c{display:flex; gap:12px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px}
+.why .c .ck{color:var(--green); font-weight:900; font-size:18px}
+.why .c b{font-size:15.5px}
+.why .c span{color:var(--muted); font-size:14px}
+
+/* pricing */
+.pricing{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:stretch}
+.tier{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:26px 20px; display:flex; flex-direction:column; position:relative}
+.tier.feat{border:2px solid var(--gold); box-shadow:0 20px 50px rgba(230,178,60,.18); transform:translateY(-6px)}
+.tier.feat .flag{position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:linear-gradient(180deg,var(--gold),var(--gold2)); color:#1a1200; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 12px; border-radius:999px; white-space:nowrap}
+.tier .nm{font-size:13px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:10px}
+.tier .pr{font-size:34px; font-weight:800; letter-spacing:-.02em}
+.tier .pr span{font-size:14px; color:var(--muted); font-weight:600}
+.tier ul{list-style:none; margin:16px 0 22px; flex:1}
+.tier li{padding:7px 0 7px 24px; position:relative; font-size:14px; color:#3a444f}
+.tier li::before{content:"✓"; position:absolute; left:0; color:var(--green); font-weight:900}
+.tier .pick{text-align:center; text-decoration:none; font-weight:700; border-radius:11px; padding:12px; font-size:15px; border:1px solid var(--line); color:var(--ink)}
+.tier.feat .pick{background:linear-gradient(180deg,var(--gold),var(--gold2)); color:#1a1200; border:none}
+
+/* guarantee + final cta */
+.guar{background:linear-gradient(135deg,var(--navy),var(--navy3)); color:#fff; border-radius:24px; padding:56px 40px; text-align:center; position:relative; overflow:hidden}
+.guar::before{content:"✦"; position:absolute; font-size:340px; color:rgba(230,178,60,.05); top:-80px; right:-40px}
+.guar .seal{width:70px;height:70px;border-radius:50%; margin:0 auto 18px; background:radial-gradient(circle at 30% 30%,var(--gold-soft),var(--gold2)); display:flex; align-items:center; justify-content:center; font-size:34px; box-shadow:0 0 0 8px rgba(230,178,60,.12)}
+.guar h2{font-size:clamp(24px,4vw,36px); margin-bottom:12px}
+.guar p{color:#c4cdd8; font-size:18px; max-width:60ch; margin:0 auto 26px}
+
+footer{padding:40px 0 70px; color:var(--muted); font-size:13px; text-align:center}
+footer .brand{color:var(--ink); font-weight:800; margin-bottom:6px}
+
+/* intake form */
+.intake{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:26px; box-shadow:0 24px 60px rgba(13,19,28,.12)}
+.intake .fld{margin-bottom:14px}
+.intake label{display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:#2a333d}
+.intake label .hint{font-weight:500; color:var(--muted)}
+.intake input,.intake select{width:100%; padding:12px 13px; border:1px solid var(--line); border-radius:10px; font-size:15px; font-family:inherit; background:#fbfcfe; color:var(--ink); transition:border-color .15s, box-shadow .15s}
+.intake input:focus,.intake select:focus{outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(230,178,60,.18)}
+.intake input.err{border-color:#e0524a; box-shadow:0 0 0 3px rgba(224,82,74,.14)}
+.intake .frow{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+.intake .formnote{text-align:center; color:var(--muted); font-size:12.5px; margin-top:12px}
+.intake .formok{display:none; text-align:center; padding:20px 10px}
+.intake .formok.show{display:block; animation:din .4s}
+.intake .formok .tick{width:56px;height:56px;border-radius:50%;margin:0 auto 12px; background:radial-gradient(circle at 30% 30%,#4be39a,var(--greenD)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 0 0 8px rgba(37,194,116,.14)}
+.intake .formok b{display:block; font-size:19px; margin-bottom:6px}
+.intake .formok span{color:var(--muted); font-size:14.5px}
+@media(max-width:540px){ .intake .frow{grid-template-columns:1fr} }
+
+@media(max-width:900px){
+  .stats .row{grid-template-columns:repeat(2,1fr); gap:20px}
+  .pain,.steps,.why{grid-template-columns:1fr}
+  .pricing{grid-template-columns:1fr 1fr}
+  .showcase .inner{grid-template-columns:1fr}
+  .scanner{border-left:none; border-top:1px solid rgba(255,255,255,.08)}
+  .digest-wrap{grid-template-columns:1fr}
+  .radar{opacity:.3; right:-220px}
+  .tier.feat{transform:none}
+}
+@media(max-width:540px){ .pricing{grid-template-columns:1fr} }
+@media(prefers-reduced-motion:reduce){
+  *{animation:none !important; transition:none !important}
+  .reveal{opacity:1; transform:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand"><span class="dot">🧭</span> Cletus Treasure Hunt</div>
+  <a href="#pricing" class="cta-mini">Start a hunt →</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="bg" id="heroBg"><!-- media injected by init(): video if present, else image, else pure CSS --></div>
+  <div class="grid-fx"></div>
+  <div class="radar" aria-hidden="true">
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="sweep"></div>
+    <div class="blip b1"></div><div class="blip b2"></div><div class="blip b3"></div><div class="blip b4"></div>
+  </div>
+  <div class="content">
+    <div class="wrap">
+      <span class="eyebrow"><span class="pulse"></span> Scanning 12+ marketplaces &amp; auction houses · live now</span>
+      <h1>We hunt the deals.<br><span class="hl">You just show up<br>and grab them.</span></h1>
+      <p class="sub">Tell us what you're after. Twice a day we scan Facebook, Craigslist, eBay and the auction houses, filter out the junk and the sold lots, and email you a short list of <b>live, local, direct links</b>. That's it.</p>
+      <div class="btns">
+        <a href="#pricing" class="btn gold">Start my first hunt — free →</a>
+        <a href="#how" class="btn ghost">See how it works</a>
+      </div>
+      <div class="trust">
+        <span><b>First find free.</b> No match in 7 days, you pay nothing.</span>
+        <span><b>Live-only.</b> Never a sold or dead listing.</span>
+      </div>
+    </div>
+  </div>
+  <div class="scrollcue">Scroll<span></span></div>
+</header>
+
+<!-- STAT STRIP -->
+<div class="stats">
+  <div class="wrap">
+    <div class="row">
+      <div class="stat"><div class="n" data-count="12" data-suffix="+">0</div><div class="l">Marketplaces &amp; auction sites watched</div></div>
+      <div class="stat"><div class="n" data-count="2" data-suffix="×/day">0</div><div class="l">Fresh scans, morning &amp; evening</div></div>
+      <div class="stat"><div class="n" data-count="220" data-suffix="+">0</div><div class="l">Raw listings filtered per run</div></div>
+      <div class="stat"><div class="n" data-count="100" data-suffix="%">0</div><div class="l">Live, direct links — never a sold lot</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="kicker">The real problem</div>
+    <h2 class="t">Finding deals isn't hard. The hours it eats are.</h2>
+    <p class="lead">Good deals move fast and hide across a dozen platforms. By the time you find one, it's sold, it was junk, or it's 300 miles away.</p>
+    <div class="pain">
+      <div class="c"><div class="ic">⏳</div><b>Hours gone</b><span>Refreshing Marketplace, Craigslist &amp; eBay every single day.</span></div>
+      <div class="c"><div class="ic">💀</div><b>Dead links</b><span>The "deal" you found already sold three days ago.</span></div>
+      <div class="c"><div class="ic">🗑️</div><b>Junk &amp; scams</b><span>Buried in every search result you scroll past.</span></div>
+      <div class="c"><div class="ic">📍</div><b>Too far away</b><span>Great price — but a five-hour drive each way.</span></div>
+      <div class="c"><div class="ic">🔨</div><b>Hidden auctions</b><span>GovDeals, HiBid, Kiko &amp; Mac.bid you never knew existed.</span></div>
+      <div class="c"><div class="ic">😴</div><b>Missed windows</b><span>Bidding closed while you were asleep.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SCANNER SHOWCASE -->
+<section class="blk" style="padding-top:10px">
+  <div class="wrap reveal">
+    <div class="showcase">
+      <div class="inner">
+        <div class="left">
+          <div class="kicker" style="color:var(--gold)">The engine</div>
+          <h3>Our scanner never sleeps.</h3>
+          <p>Every morning and every evening it sweeps the whole market, scores each listing, throws out the dead and the far-away, and keeps only what's worth your time.</p>
+          <div class="feats">
+            <div><span class="ck">✓</span> <span><b>Live-only filter</b> — closed &amp; sold lots removed automatically.</span></div>
+            <div><span class="ck">✓</span> <span><b>~150-mile radius</b> — far-away listings dropped before you see them.</span></div>
+            <div><span class="ck">✓</span> <span><b>Auction coverage</b> — GovDeals, HiBid, Kiko, Mac.bid, BidFTA &amp; more.</span></div>
+            <div><span class="ck">✓</span> <span><b>Judged, not dumped</b> — every keeper says why, and what to check.</span></div>
+          </div>
+        </div>
+        <div class="scanner" id="scanner">
+          <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="title">cletus-treasure-hunt · live scan</span></div>
+          <div id="scanFeed"></div>
+          <div class="sweepbar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="blk" id="how">
+  <div class="wrap reveal">
+    <div class="kicker">How it works</div>
+    <h2 class="t">Three steps. Then you just open your email.</h2>
+    <p class="lead">You set the target once. We do the hunting from then on.</p>
+    <div class="steps">
+      <div class="step"><div class="ic">🎯</div><h3>Tell us what you hunt</h3><p>Restaurant equipment, IT gear, mowers, tools, collectibles, a specific truck — your target, your budget, your range.</p></div>
+      <div class="step"><div class="ic">🛰️</div><h3>We scan everything, 2× a day</h3><p>Marketplace, Craigslist, eBay and the auction houses. We filter out sold lots, junk and anything too far away.</p></div>
+      <div class="step"><div class="ic">📬</div><h3>You get a short list</h3><p>A clean email of live, direct links — with why each made the cut, what to check, and how far it is. Go grab it.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TREASURE CHEST BAND -->
+<section style="position:relative; min-height:340px; display:flex; align-items:center; overflow:hidden; background:var(--navy)">
+  <div style="position:absolute; inset:0; z-index:0">
+    <img src="media/chest.jpg" alt="A treasure chest overflowing with tech gear, servers, speakers and tools" style="width:100%;height:100%;object-fit:cover;opacity:.5" loading="lazy">
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,14,19,.94),rgba(11,14,19,.55))"></div>
+  </div>
+  <div class="wrap reveal" style="position:relative;z-index:2">
+    <div class="kicker" style="color:var(--gold)">The whole market, opened up</div>
+    <h2 class="t" style="color:#fff; max-width:18ch">There's treasure out there every single day. Most people never find it in time.</h2>
+    <p class="lead" style="color:#c4cdd8; margin-bottom:0">Servers, LED walls, pro audio, tools, IT racks, collectibles — the good stuff sells in hours. We open the chest for you twice a day.</p>
+  </div>
+</section>
+
+<!-- INCOMING DIGEST -->
+<section class="blk" style="background:linear-gradient(180deg,#fff,#f1f5fb)">
+  <div class="wrap reveal">
+    <div class="digest-wrap">
+      <div>
+        <div class="kicker">What lands in your inbox</div>
+        <h2 class="t">A real digest looks like this.</h2>
+        <p class="lead" style="margin-bottom:18px">Short. Scannable. Every link live at send time. Watch it arrive →</p>
+        <img src="media/dashboard.jpg" alt="Cletus Treasure Hunt radar dashboard showing live deal cards with prices and distances" style="width:100%; border-radius:14px; border:1px solid var(--line); box-shadow:0 18px 44px rgba(13,19,28,.14); margin-bottom:22px" loading="lazy">
+        <a href="#pricing" class="btn gold">Get this in my inbox →</a>
+      </div>
+      <div class="digest" id="digest">
+        <div class="head">
+          <div class="av">🧭</div>
+          <div class="from"><b>Cletus Treasure Hunt</b>Your evening finds are in</div>
+          <div class="time">6:30 PM</div>
+        </div>
+        <div class="body" id="digestBody"></div>
+        <div class="foot" id="digestFoot" style="opacity:0">Filtered out this run: 14 closed lots · 9 out-of-area · 40+ off-target. Read-only scouting — we never contact sellers or spend for you.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="kicker">Why ours beats doing it yourself</div>
+    <h2 class="t">You could do this. It would cost you your evenings.</h2>
+    <div class="why" style="margin-top:22px">
+      <div class="c"><span class="ck">✓</span><div><b>Live-only.</b> <span>Closed &amp; sold auction lots filtered out — no dead links, ever.</span></div></div>
+      <div class="c"><span class="ck">✓</span><div><b>Local-first.</b> <span>A ~150-mile distance guard drops far listings automatically.</span></div></div>
+      <div class="c"><span class="ck">✓</span><div><b>Auction coverage.</b> <span>Sites most people never check — we watch them all.</span></div></div>
+      <div class="c"><span class="ck">✓</span><div><b>Judged, not dumped.</b> <span>Every line says why it's a deal and what to inspect.</span></div></div>
+      <div class="c"><span class="ck">✓</span><div><b>Twice daily.</b> <span>New listings caught within hours, not days.</span></div></div>
+      <div class="c"><span class="ck">✓</span><div><b>Safe by default.</b> <span>We never contact sellers or spend on your behalf.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="blk" id="pricing">
+  <div class="wrap reveal">
+    <div class="kicker">Plans</div>
+    <h2 class="t">Start with one hunt. Scale when you see what lands.</h2>
+    <p class="lead">Simple pricing. Cancel anytime. First find free.</p>
+    <div class="pricing">
+      <div class="tier">
+        <div class="nm">Single Hunt</div>
+        <div class="pr">$49<span> once</span></div>
+        <ul><li>1 target</li><li>7-day watch</li><li>Daily email</li><li>Live direct links</li></ul>
+        <a href="#" class="pick">Start a hunt</a>
+      </div>
+      <div class="tier feat">
+        <div class="flag">Most Popular</div>
+        <div class="nm">Standard</div>
+        <div class="pr">$99<span>/mo</span></div>
+        <ul><li>Up to 3 targets</li><li>2× daily scan</li><li>Local-first filter</li><li>Tune anytime</li></ul>
+        <a href="#" class="pick">Choose Standard</a>
+      </div>
+      <div class="tier">
+        <div class="nm">Pro</div>
+        <div class="pr">$199<span>/mo</span></div>
+        <ul><li>Up to 6 targets</li><li>Auction houses</li><li>Bid-ceiling math</li><li>Priority alerts</li></ul>
+        <a href="#" class="pick">Go Pro</a>
+      </div>
+      <div class="tier">
+        <div class="nm">Local Business</div>
+        <div class="pr">$299<span>/mo</span></div>
+        <ul><li>Equipment sourcing</li><li>We flag when to bid</li><li>Unlimited tuning</li><li>Direct line to us</li></ul>
+        <a href="#" class="pick">Talk to us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNUP / INTAKE -->
+<section class="blk" id="start" style="background:linear-gradient(180deg,#f1f5fb,#fff)">
+  <div class="wrap reveal">
+    <div class="digest-wrap" style="align-items:start">
+      <div>
+        <div class="kicker">Start your hunt</div>
+        <h2 class="t">Tell us what you're after.</h2>
+        <p class="lead" style="margin-bottom:18px">One target, free for 7 days. We'll email you the first live, on-target find — or you pay nothing. No card required to start.</p>
+        <div class="why" style="grid-template-columns:1fr">
+          <div class="c"><span class="ck">✓</span><div><b>Free first find.</b> <span>No match in 7 days, you owe nothing.</span></div></div>
+          <div class="c"><span class="ck">✓</span><div><b>No spam.</b> <span>Just your deal digest. Unsubscribe anytime.</span></div></div>
+          <div class="c"><span class="ck">✓</span><div><b>You stay in control.</b> <span>We never contact sellers or spend for you.</span></div></div>
+        </div>
+      </div>
+      <form class="intake" id="intakeForm" novalidate>
+        <div class="fld">
+          <label for="f_name">Your name</label>
+          <input id="f_name" name="name" type="text" autocomplete="name" placeholder="First and last" required>
+        </div>
+        <div class="fld">
+          <label for="f_email">Email <span class="hint">(where your finds go)</span></label>
+          <input id="f_email" name="email" type="email" autocomplete="email" placeholder="you@email.com" required>
+        </div>
+        <div class="fld">
+          <label for="f_target">What are you hunting?</label>
+          <input id="f_target" name="target" type="text" placeholder="e.g. Dell PowerEdge servers, riding mower, neon beer signs" required>
+        </div>
+        <div class="frow">
+          <div class="fld">
+            <label for="f_budget">Max budget</label>
+            <input id="f_budget" name="budget" type="text" inputmode="numeric" placeholder="$ e.g. 1500">
+          </div>
+          <div class="fld">
+            <label for="f_zip">Your ZIP</label>
+            <input id="f_zip" name="zip" type="text" inputmode="numeric" maxlength="5" placeholder="44060">
+          </div>
+          <div class="fld">
+            <label for="f_radius">Radius</label>
+            <select id="f_radius" name="radius">
+              <option value="50">50 mi</option>
+              <option value="100">100 mi</option>
+              <option value="150" selected>150 mi</option>
+              <option value="250">250 mi</option>
+              <option value="ship">Willing to ship</option>
+            </select>
+          </div>
+        </div>
+        <div class="fld">
+          <label for="f_plan">Plan you're interested in</label>
+          <select id="f_plan" name="plan">
+            <option value="free">Free first find (start here)</option>
+            <option value="single">Single Hunt — $49 once</option>
+            <option value="standard">Standard — $99/mo</option>
+            <option value="pro">Pro — $199/mo</option>
+            <option value="business">Local Business — $299/mo</option>
+          </select>
+        </div>
+        <button type="submit" class="btn gold" id="intakeBtn" style="width:100%; justify-content:center; margin-top:6px">Start my free hunt →</button>
+        <p class="formnote" id="formNote">🔒 We never share your info. No card required to start.</p>
+        <div class="formok" id="formOk" hidden>
+          <div class="tick">✓</div>
+          <b>You're in the hunt!</b>
+          <span id="okMsg">We've got your target. Your first digest is on the way — watch your inbox.</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- GUARANTEE -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="guar">
+      <div class="seal">✦</div>
+      <h2>The "First Find Free" guarantee</h2>
+      <p>Tell us your first target. If we don't put a real, live, on-target deal in front of you within 7 days, you owe nothing. We only win when you do.</p>
+      <a href="#" class="btn gold">Start my first hunt →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">🧭 Cletus Treasure Hunt</div>
+    A service of Cletus Advanced Solutions · Northeast Ohio<br>
+    Read-only deal scouting. We never contact sellers, place bids, or spend on your behalf without your say-so.
+  </div>
+</footer>
+
+<script>
+/* ---------- hero media: video (mp4/webm) > image > pure CSS ---------- */
+function initHeroMedia(){
+  const bg = document.getElementById('heroBg');
+  const v = document.createElement('video');
+  v.muted=true; v.loop=true; v.playsInline=true; v.autoplay=true; v.preload='auto';
+  v.setAttribute('playsinline',''); v.setAttribute('muted','');
+  v.poster='media/hero-poster.jpg';
+  v.style.cssText='width:100%;height:100%;object-fit:cover';
+  const mp4=document.createElement('source'); mp4.src='media/hero.mp4'; mp4.type='video/mp4';
+  const webm=document.createElement('source'); webm.src='media/hero.webm'; webm.type='video/webm';
+  v.appendChild(webm); v.appendChild(mp4);
+  let mounted=false;
+  v.addEventListener('loadeddata', ()=>{ if(!mounted){ mounted=true; bg.innerHTML=''; bg.appendChild(v); v.play().catch(()=>{}); } });
+  v.addEventListener('error', fallbackImg);
+  // if video hasn't loaded in 3.5s (blocked autoplay / slow), show the image so hero never sits dark
+  setTimeout(()=>{ if(!mounted) fallbackImg(); }, 3500);
+  function fallbackImg(){
+    if(mounted) return;
+    const testImg=new Image();
+    testImg.onload=()=>{ if(!mounted) bg.innerHTML='<img src="media/hero.jpg" alt="Treasure hunt scanner sweeping Ohio for tech deals" style="width:100%;height:100%;object-fit:cover">'; };
+    testImg.src='media/hero.jpg';
+  }
+  // kick the load
+  v.load();
+}
+initHeroMedia();
+
+/* ---------- scroll reveal ---------- */
+const io = new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in'); io.unobserve(e.target);}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- animated counters ---------- */
+const cio = new IntersectionObserver((es)=>es.forEach(e=>{
+  if(!e.isIntersecting) return;
+  const el=e.target, target=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+  let cur=0, step=Math.max(1,Math.round(target/40)); const t=setInterval(()=>{cur+=step; if(cur>=target){cur=target; clearInterval(t);} el.textContent=pre+cur+suf;},28);
+  cio.unobserve(el);
+}),{threshold:.6});
+document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+
+/* safety net: reveal + count anything already visible on load, and never leave blanks */
+window.addEventListener('load', ()=>{
+  const vh = window.innerHeight;
+  document.querySelectorAll('.reveal').forEach(el=>{
+    const r=el.getBoundingClientRect(); if(r.top < vh*0.92) el.classList.add('in');
+  });
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    if(!el.dataset.done){ el.dataset.done='1';
+      const target=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+      let cur=0, step=Math.max(1,Math.round(target/40));
+      const t=setInterval(()=>{cur+=step; if(cur>=target){cur=target; clearInterval(t);} el.textContent=pre+cur+suf;},28);
+    }
+  });
+});
+/* absolute fallback: after 2.5s any still-hidden reveal is forced visible */
+setTimeout(()=>document.querySelectorAll('.reveal:not(.in)').forEach(el=>el.classList.add('in')), 2500);
+
+/* ---------- live scanner feed (always moving) ---------- */
+const feed = document.getElementById('scanFeed');
+const scanItems = [
+  {src:'facebook', msg:'Dell PowerEdge R730xd 12-bay', tag:'live', kind:'hit'},
+  {src:'craigslist', msg:'Riding mower, runs great — $450', tag:'live', kind:'hit'},
+  {src:'ebay', msg:'iPhone 15 128GB unlocked — $250', tag:'live', kind:'hit'},
+  {src:'govdeals', msg:'26 misc servers, pallet lot', tag:'live', kind:'hit'},
+  {src:'hibid', msg:'Auction ended Aug 5 — SOLD', tag:'x', kind:'rej'},
+  {src:'facebook', msg:'Dell Latitude laptop bundle', tag:'x', kind:'rej'},
+  {src:'kiko', msg:'42U server rack + rails', tag:'live', kind:'hit'},
+  {src:'craigslist', msg:'JBL EON15 powered pair — $700', tag:'live', kind:'hit'},
+  {src:'mac.bid', msg:'LED WiFi open sign — $47', tag:'live', kind:'hit'},
+  {src:'ebay', msg:'Located: Phoenix, AZ (1,900 mi)', tag:'x', kind:'rej'},
+  {src:'govdeals', msg:'Cisco switch stack, 48-port', tag:'live', kind:'hit'},
+  {src:'facebook', msg:'Cracked-screen phone, for parts', tag:'x', kind:'rej'},
+];
+let si=0;
+function pushScan(){
+  const it = scanItems[si % scanItems.length]; si++;
+  const row = document.createElement('div');
+  row.className = 'scan-line '+it.kind;
+  row.innerHTML = '<span class="src">'+it.src+'</span><span class="msg">'+it.msg+'</span>'+
+    '<span class="tag '+(it.tag==='live'?'live':'x')+'">'+(it.tag==='live'?'LIVE':'DROP')+'</span>';
+  feed.appendChild(row);
+  while(feed.children.length>9) feed.removeChild(feed.firstChild);
+}
+for(let i=0;i<6;i++) pushScan();
+setInterval(pushScan, 1400);
+
+/* ---------- incoming digest animation ---------- */
+const deals = [
+  {ic:'🖥️', name:'Dell PowerEdge R730xd', meta:'$1,000 · Northfield, OH · 16 mi', why:'✓ live · 12×LFF, takes big drives', p:'$1,000', badge:'LIVE'},
+  {ic:'🪧', name:'Neon "Citra Dog" Beer Sign', meta:'$150 · Solon, OH · 18 mi', why:'✓ under comparable sold prices', p:'$150', badge:'LIVE'},
+  {ic:'🔊', name:'JBL EON15-P1 Pair (serviced)', meta:'$700 · Avon Lake, OH · 30 mi', why:'✓ matched & serviced — resells well', p:'$700', badge:'LIVE'},
+  {ic:'🚜', name:'Craftsman Riding Mower', meta:'$450 · Chagrin Falls · 22 mi', why:'✓ runs, in budget, close pickup', p:'$450', badge:'LIVE'},
+];
+const dBody=document.getElementById('digestBody'), dFoot=document.getElementById('digestFoot');
+const dio = new IntersectionObserver((es)=>es.forEach(e=>{
+  if(!e.isIntersecting) return; dio.unobserve(e.target);
+  deals.forEach((d,i)=>{
+    setTimeout(()=>{
+      const row=document.createElement('div'); row.className='dl in';
+      row.innerHTML='<div class="thumb">'+d.ic+'</div>'+
+        '<div class="info"><b>'+d.name+'</b><div class="meta">'+d.meta+'</div><div class="why">'+d.why+'</div></div>'+
+        '<div class="price"><div class="p">'+d.p+'</div><div class="badge">'+d.badge+'</div></div>';
+      dBody.appendChild(row);
+      if(i===deals.length-1) setTimeout(()=>{dFoot.style.transition='opacity .5s'; dFoot.style.opacity='1';},400);
+    }, i*520);
+  });
+}),{threshold:.4});
+dio.observe(document.getElementById('digest'));
+
+/* ---------- intake form: validate + capture ---------- */
+(function(){
+  const form=document.getElementById('intakeForm'); if(!form) return;
+  const btn=document.getElementById('intakeBtn'), note=document.getElementById('formNote'), ok=document.getElementById('formOk');
+  const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const data=Object.fromEntries(new FormData(form).entries());
+    // validate
+    let bad=false;
+    [['name',v=>v.trim().length>1],['email',v=>emailRe.test(v)],['target',v=>v.trim().length>2]].forEach(([k,test])=>{
+      const el=form.elements[k]; if(!test(el.value)){el.classList.add('err'); bad=true;} else el.classList.remove('err');
+    });
+    if(bad){ note.textContent='Please fill in your name, a valid email, and what you\u2019re hunting.'; note.style.color='#e0524a'; return; }
+    btn.disabled=true; btn.textContent='Sending\u2026'; note.style.color='';
+    data.ts=new Date().toISOString(); data.source='treasure-hunt-landing';
+    let sent=false;
+    try{
+      const r=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      sent = r.ok;
+    }catch(err){ sent=false; }
+    if(!sent){ // static host (no backend): stash locally AND open a prefilled email so the lead reaches us
+      try{ const q=JSON.parse(localStorage.getItem('th_leads')||'[]'); q.push(data); localStorage.setItem('th_leads',JSON.stringify(q)); }catch(e){}
+      try{
+        const subj=encodeURIComponent('New Treasure Hunt signup: '+(data.name||'')+' \u2014 '+(data.target||''));
+        const body=encodeURIComponent('Name: '+(data.name||'')+'\nEmail: '+(data.email||'')+'\nHunting: '+(data.target||'')+'\nBudget: '+(data.budget||'')+'\nZIP: '+(data.zip||'')+'  Radius: '+(data.radius||'')+'\nPlan: '+(data.plan||''));
+        window.location.href='mailto:4hitech@gmail.com?subject='+subj+'&body='+body;
+      }catch(e){}
+    }
+    form.querySelectorAll('.fld, .frow, #intakeBtn, .formnote').forEach(el=>el.style.display='none');
+    ok.hidden=false; ok.classList.add('show');
+    document.getElementById('okMsg').textContent='We\u2019ve got your target: \u201c'+(data.target||'your hunt')+'\u201d. Your first digest is on the way \u2014 watch '+(data.email||'your inbox')+'.';
+  });
+})();
+
+/* route all "start" CTAs to the intake form */
+document.querySelectorAll('a[href="#"]').forEach(a=>{ a.setAttribute('href','#start'); });
+</script>
+</body>
+</html>
