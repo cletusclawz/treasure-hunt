@@ -57,6 +57,13 @@ a{color:inherit}
 .hero .bg img,.hero .bg video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.7}
 .hero .bg .hero-video{opacity:0; pointer-events:none; transition:opacity .45s ease}
 .hero .bg .hero-video.is-playing{opacity:.7}
+.hero .bg .hero-fallback{transform-origin:58% 48%; will-change:transform,filter; animation:heroFallbackDrift 7s ease-in-out infinite alternate; transition:opacity .45s ease}
+.hero .bg:has(.hero-video.is-playing) .hero-fallback{opacity:0; animation-play-state:paused}
+@keyframes heroFallbackDrift{
+  0%{transform:scale(1.02) translate3d(-.35%,0,0); filter:brightness(.95) saturate(.95)}
+  52%{transform:scale(1.075) translate3d(.55%,-.45%,0); filter:brightness(1.04) saturate(1.07)}
+  100%{transform:scale(1.045) translate3d(-.2%,.35%,0); filter:brightness(.98) saturate(1.02)}
+}
 .hero .bg::after{content:""; position:absolute; inset:0;
   background:linear-gradient(90deg,rgba(11,14,19,.88) 0%,rgba(11,14,19,.6) 45%,rgba(11,14,19,.25) 100%)}
 .hero .grid-fx{position:absolute; inset:0; z-index:1; opacity:.25;
@@ -654,13 +661,12 @@ footer .brand{color:var(--ink); font-weight:800; margin-bottom:6px}
 function initHeroMedia(){
   const bg = document.getElementById('heroBg');
 
-  // This same-source animated WebP keeps the hero moving when a browser blocks autoplay.
+  // The selected USA still receives CSS motion when a browser blocks video autoplay.
   const fallback = document.createElement('img');
   fallback.className='hero-fallback';
-  fallback.src='media/usa-hero-loop.webp';
+  fallback.src='media/usa-hero-poster.jpg';
   fallback.alt='Treasure Hunt scanner sweeping a map of the United States for live tech, equipment and auction deals';
   fallback.setAttribute('fetchpriority','high');
-  fallback.addEventListener('error',()=>{ fallback.src='media/usa-hero-poster.jpg'; },{once:true});
   bg.replaceChildren(fallback);
 
   const v = document.createElement('video');
